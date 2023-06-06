@@ -253,7 +253,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
         return new MessageBuilder()
                 .setContent(FormatUtil.filter(manager.getBot().getConfig().getSuccess()+" **Now Playing...**"))
                 .setEmbeds(new EmbedBuilder()
-                .setTitle("No music playing")
+                .setTitle("No music playing love day")
                 .setDescription(STOP_EMOJI+" "+FormatUtil.progressBar(-1)+" "+FormatUtil.volumeIcon(audioPlayer.getVolume()))
                 .setColor(guild.getSelfMember().getColor())
                 .build()).build();

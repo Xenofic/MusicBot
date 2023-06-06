@@ -41,7 +41,14 @@ public class EvalCmd extends OwnerCommand
     @Override
     protected void execute(CommandEvent event) 
     {
-        ScriptEngine se = new ScriptEngineManager().getEngineByName("Nashorn");
+        ScriptEngineManager mgr = new ScriptEngineManager();
+        ScriptEngine se = mgr.getEngineByName("js");
+
+        if (se == null)
+        {
+            event.reply(event.getClient().getError()+" It seems the engine you provided returns null");
+        }
+
         se.put("bot", bot);
         se.put("event", event);
         se.put("jda", event.getJDA());

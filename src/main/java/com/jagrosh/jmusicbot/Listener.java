@@ -17,9 +17,6 @@ package com.jagrosh.jmusicbot;
 
 import com.jagrosh.jmusicbot.utils.OtherUtil;
 import java.util.concurrent.TimeUnit;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.ShutdownEvent;
@@ -53,7 +50,7 @@ public class Listener extends ListenerAdapter
             log.warn("This bot is not on any guilds! Use the following link to add the bot to your guilds!");
             log.warn(event.getJDA().getInviteUrl(JMusicBot.RECOMMENDED_PERMS));
         }
-        credit(event.getJDA());
+        //credit(event.getJDA());
         event.getJDA().getGuilds().forEach((guild) -> 
         {
             try
@@ -73,13 +70,13 @@ public class Listener extends ListenerAdapter
             {
                 try
                 {
-                    User owner = bot.getJDA().retrieveUserById(bot.getConfig().getOwnerId()).complete();
+                    //User owner = bot.getJDA().retrieveUserById(bot.getConfig().getOwnerId()).complete();
                     String currentVersion = OtherUtil.getCurrentVersion();
                     String latestVersion = OtherUtil.getLatestVersion();
                     if(latestVersion!=null && !currentVersion.equalsIgnoreCase(latestVersion))
                     {
-                        String msg = String.format(OtherUtil.NEW_VERSION_AVAILABLE, currentVersion, latestVersion);
-                        owner.openPrivateChannel().queue(pc -> pc.sendMessage(msg).queue());
+                        //String msg = String.format(OtherUtil.NEW_VERSION_AVAILABLE, currentVersion, latestVersion);
+                        //owner.openPrivateChannel().queue(pc -> pc.sendMessage(msg).queue());
                     }
                 }
                 catch(Exception ex) {} // ignored
@@ -108,19 +105,19 @@ public class Listener extends ListenerAdapter
     @Override
     public void onGuildJoin(GuildJoinEvent event) 
     {
-        credit(event.getJDA());
+        //credit(event.getJDA());
     }
     
     // make sure people aren't adding clones to dbots
-    private void credit(JDA jda)
+    /*private void credit(JDA jda)
     {
-        Guild dbots = jda.getGuildById(110373943822540800L);
+        Guild dbots = jda.getGuildById(949530111693180928L);
         if(dbots==null)
             return;
         if(bot.getConfig().getDBots())
             return;
-        jda.getTextChannelById(119222314964353025L)
-                .sendMessage("This account is running JMusicBot. Please do not list bot clones on this server, <@"+bot.getConfig().getOwnerId()+">.").complete();
-        dbots.leave().queue();
-    }
+        jda.getTextChannelById(976462563959246918L)
+                .sendMessage("Pencho restart hogya bot, <@"+bot.getConfig().getOwnerId()+">.").complete();
+        //dbots.leave().queue();
+    }*/
 }

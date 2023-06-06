@@ -36,10 +36,11 @@ import org.json.JSONTokener;
  */
 public class OtherUtil
 {
-    public final static String NEW_VERSION_AVAILABLE = "There is a new version of JMusicBot available!\n"
+    /*public final static String NEW_VERSION_AVAILABLE = "There is a new version of JMusicBot available!\n"
                     + "Current version: %s\n"
                     + "New Version: %s\n\n"
-                    + "Please visit https://github.com/jagrosh/MusicBot/releases/latest to get the latest release.";
+                    + "Please visit https://github.com/jagrosh/MusicBot/releases/latest to get the latest release"
+                    + "Merge the latest branch.";*/
     private final static String WINDOWS_INVALID_PATH = "c:\\windows\\system32\\";
     
     /**
@@ -155,20 +156,6 @@ public class OtherUtil
         if(!System.getProperty("java.vm.name").contains("64"))
             prompt.alert(Prompt.Level.WARNING, "Java Version", 
                     "It appears that you may not be using a supported Java version. Please use 64-bit java.");
-    }
-    
-    public static void checkVersion(Prompt prompt)
-    {
-        // Get current version number
-        String version = getCurrentVersion();
-        
-        // Check for new version
-        String latestVersion = getLatestVersion();
-        
-        if(latestVersion!=null && !latestVersion.equals(version))
-        {
-            prompt.alert(Prompt.Level.WARNING, "JMusicBot Version", String.format(NEW_VERSION_AVAILABLE, version, latestVersion));
-        }
     }
     
     public static String getCurrentVersion()

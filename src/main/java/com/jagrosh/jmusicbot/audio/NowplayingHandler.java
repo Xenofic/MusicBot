@@ -145,7 +145,7 @@ public class NowplayingHandler
         }
         
         // update channel topic if applicable
-        updateTopic(guildId, handler, false);
+        //updateTopic(guildId, handler, false);
     }
     
     public void onMessageDelete(Guild guild, long messageId)
