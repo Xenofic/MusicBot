@@ -51,7 +51,7 @@ Kana supports all sources and formats supported by [lavaplayer](https://github.c
 ![Loading Example...](https://i.imgur.com/kVtTKvS.gif)
 
 ## Setup
-Please see the [Setup Page](https://jmusicbot.com/setup) to run this bot yourself!
+Please see the [Setup Page](https://youtu.be/BT9h5ifR1tY) to run this bot yourself!
 
 ## Questions/Suggestions/Bug Reports
 **Please read the [Issues List](https://github.com/jagrosh/MusicBot/issues) before suggesting a feature**. If you have a question, need troubleshooting help, or want to brainstorm a new feature, please start a [Discussion](https://github.com/jagrosh/MusicBot/discussions). If you'd like to suggest a feature or report a reproducible bug, please open an [Issue](https://github.com/jagrosh/MusicBot/issues) on this repository. If you like this bot, be sure to add a star to the libraries that make this possible: [**JDA**](https://github.com/DV8FromTheWorld/JDA) and [**lavaplayer**](https://github.com/sedmelluq/lavaplayer)!
