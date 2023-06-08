@@ -35,10 +35,13 @@ import java.nio.ByteBuffer;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.Button;
+import net.dv8tion.jda.api.interactions.components.ButtonStyle;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -195,8 +198,45 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
     {
         votes.clear();
         manager.getBot().getNowplayingHandler().onTrackUpdate(guildId, track, this);
+        Guild guild = manager.getBot().getJDA().getGuildById(guildId);
+        if(guild==null)
+            return;
+
+        Settings settings = manager.getBot().getSettingsManager().getSettings(guildId);
+        TextChannel channel = manager.getBot().getJDA().getTextChannelById(settings.getTextChannel(guild).getId());
+
+        if (channel!=null && guild.getSelfMember().hasPermission(channel, Permission.MESSAGE_EMBED_LINKS))
+        {
+            EmbedBuilder embed = new EmbedBuilder();
+            embed.setTitle("Now playing:");
+            embed.setDescription(String.format("• [%s](%s) | %s", audioPlayer.getPlayingTrack().getInfo().title, audioPlayer.getPlayingTrack().getInfo().uri, audioPlayer.getPlayingTrack().getInfo().author));
+            embed.setFooter(String.format("%s", formatMilliseconds(audioPlayer.getPlayingTrack().getDuration())));
+            embed.setThumbnail(String.format("https://img.youtube.com/vi/%s/maxresdefault.jpg?width=885&height=498", audioPlayer.getPlayingTrack().getIdentifier()));
+            embed.setColor(manager.getBot().getJDA().getGuildById(guildId).getSelfMember().getColor());
+
+            channel.sendMessageEmbeds(embed.build()).setActionRows(
+                    ActionRow.of(
+                            Button.of(ButtonStyle.SECONDARY, "⏯️", Emoji.fromUnicode("⏯️")),
+                            Button.of(ButtonStyle.SECONDARY, "⏭️", Emoji.fromUnicode("⏭️")),
+                            Button.of(ButtonStyle.SECONDARY, "⏹️", Emoji.fromUnicode("⏹️")),
+                            Button.of(ButtonStyle.SECONDARY, "🔁", Emoji.fromUnicode("🔁")),
+                            Button.of(ButtonStyle.SECONDARY, "🔀", Emoji.fromUnicode("🔀"))
+                    ),
+                    ActionRow.of(
+                            Button.of(ButtonStyle.SECONDARY, "🔉", Emoji.fromUnicode("🔉")),
+                            Button.of(ButtonStyle.SECONDARY, "\uD83D\uDD0A", Emoji.fromUnicode("\uD83D\uDD0A"))
+                    )
+            ).queue();
+        }
     }
 
+    public static String formatMilliseconds(long milliseconds) {
+        long hours = TimeUnit.MILLISECONDS.toHours(milliseconds);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds) % 60;
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(milliseconds) % 60;
+
+        return String.format("%d:%02d:%02d", hours, minutes, seconds);
+    }
     
     // Formatting
     public Message getNowPlaying(JDA jda)
@@ -253,7 +293,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
         return new MessageBuilder()
                 .setContent(FormatUtil.filter(manager.getBot().getConfig().getSuccess()+" **Now Playing...**"))
                 .setEmbeds(new EmbedBuilder()
-                .setTitle("No music playing love day")
+                .setTitle("No music playing")
                 .setDescription(STOP_EMOJI+" "+FormatUtil.progressBar(-1)+" "+FormatUtil.volumeIcon(audioPlayer.getVolume()))
                 .setColor(guild.getSelfMember().getColor())
                 .build()).build();

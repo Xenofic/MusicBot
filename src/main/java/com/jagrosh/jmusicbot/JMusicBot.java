@@ -113,8 +113,8 @@ public class JMusicBot {
                     embed.setAuthor("Kana | Help Menu", event.getAuthor().getAvatarUrl(), event.getAuthor().getAvatarUrl());
                     embed.setDescription(stringBuilder);
                     embed.addField("General [3]", "`about`, `ping`, `settings`", false);
-                    embed.addField("Music [10]",
-                            "`lyrics`, `nowplaying`, `play`, `playlists`, `queue`, `remove`, `search`, `scsearch`, `shuffle`, `skip`",
+                    embed.addField("Music [9]",
+                            "`nowplaying`, `play`, `playlists`, `queue`, `remove`, `search`, `scsearch`, `shuffle`, `skip`",
                             false);
                     embed.addField("DJ [9]",
                             "`forceremove`, `forceskip`, `movetrack`, `pause`, `playnext`, `repeat`, `skipto`, `stop`, `volume`",
@@ -137,7 +137,6 @@ public class JMusicBot {
                         new SettingsCmd(bot),
                         new AboutCmd(bot),
 
-                        new LyricsCmd(bot),
                         new NowplayingCmd(bot),
                         new PlayCmd(bot),
                         new PlaylistsCmd(bot),
