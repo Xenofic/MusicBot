@@ -41,6 +41,8 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.Button;
 import net.dv8tion.jda.api.interactions.components.ButtonStyle;
+import net.dv8tion.jda.api.requests.restaction.MessageAction;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -62,6 +64,8 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
     private final long guildId;
     
     private AudioFrame lastFrame;
+
+    private Message trackNp;
 
     protected AudioHandler(PlayerManager manager, Guild guild, AudioPlayer player)
     {
@@ -163,6 +167,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) 
     {
+        trackNp.delete().submit();
         RepeatMode repeatMode = manager.getBot().getSettingsManager().getSettings(guildId).getRepeatMode();
         // if the track ended normally, and we're in repeat mode, re-add it to the queue
         if(endReason==AudioTrackEndReason.FINISHED && repeatMode != RepeatMode.OFF)
@@ -214,7 +219,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
             embed.setThumbnail(String.format("https://img.youtube.com/vi/%s/maxresdefault.jpg?width=885&height=498", audioPlayer.getPlayingTrack().getIdentifier()));
             embed.setColor(manager.getBot().getJDA().getGuildById(guildId).getSelfMember().getColor());
 
-            channel.sendMessageEmbeds(embed.build()).setActionRows(
+            Message data = channel.sendMessageEmbeds(embed.build()).setActionRows(
                     ActionRow.of(
                             Button.of(ButtonStyle.SECONDARY, "⏯️", Emoji.fromUnicode("⏯️")),
                             Button.of(ButtonStyle.SECONDARY, "⏭️", Emoji.fromUnicode("⏭️")),
@@ -226,7 +231,9 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
                             Button.of(ButtonStyle.SECONDARY, "🔉", Emoji.fromUnicode("🔉")),
                             Button.of(ButtonStyle.SECONDARY, "\uD83D\uDD0A", Emoji.fromUnicode("\uD83D\uDD0A"))
                     )
-            ).queue();
+            ).complete();
+
+            this.trackNp = data;
         }
     }
 

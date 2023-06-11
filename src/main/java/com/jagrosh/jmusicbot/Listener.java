@@ -15,6 +15,10 @@
  */
 package com.jagrosh.jmusicbot;
 
+import com.jagrosh.jmusicbot.audio.AudioHandler;
+import com.jagrosh.jmusicbot.audio.RequestMetadata;
+import com.jagrosh.jmusicbot.settings.RepeatMode;
+import com.jagrosh.jmusicbot.settings.Settings;
 import com.jagrosh.jmusicbot.utils.OtherUtil;
 import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.entities.VoiceChannel;
@@ -22,11 +26,14 @@ import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.ShutdownEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
+import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
 
 /**
  *
@@ -94,6 +101,62 @@ public class Listener extends ListenerAdapter
     public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event)
     {
         bot.getAloneInVoiceHandler().onVoiceUpdate(event);
+    }
+
+    @Override
+    public void onButtonClick(@Nonnull ButtonClickEvent event) {
+        AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
+        switch (event.getComponentId()) {
+            case "⏯️":
+                if (handler.getPlayer().isPaused()) {
+                    handler.getPlayer().setPaused(false);
+
+                    event.deferReply(true).setContent("Resumed the player").queue();
+                } else if (!handler.getPlayer().isPaused()) {
+                    handler.getPlayer().setPaused(true);
+
+                    event.deferReply(true).setContent("Paused the player").queue();
+                }
+                break;
+            case "⏭️":
+                event.deferReply(true).setContent(String.format("Skipping **%s** now", handler.getPlayer().getPlayingTrack().getInfo().title)).queue();
+
+                handler.getPlayer().stopTrack();
+                break;
+            case "⏹️":
+                event.deferReply(true).setContent("Destroying player").queue();
+
+                handler.getPlayer().destroy();
+                break;
+            case "🔁":
+                Settings settings = bot.getSettingsManager().getSettings(event.getGuild().getIdLong());
+
+                if (settings.getRepeatMode() == RepeatMode.OFF) {
+                    settings.setRepeatMode(RepeatMode.SINGLE);
+
+                    event.deferReply(true).setContent("Looping track").queue();
+                } else if (settings.getRepeatMode() == RepeatMode.SINGLE) {
+                    settings.setRepeatMode(RepeatMode.ALL);
+
+                    event.deferReply(true).setContent("Looping queue").queue();
+                } else if (settings.getRepeatMode() == RepeatMode.ALL) {
+                    settings.setRepeatMode(RepeatMode.OFF);
+
+                    event.deferReply(true).setContent("Looping disabled").queue();
+                }
+            break;
+            case "🔀":
+                handler.getQueue().shuffle(event.getUser().getIdLong());
+
+                event.deferReply(true).setContent("Shuffled queue").queue();
+                break;
+            case "🔉":
+                event.deferReply(true).setContent("soon:tm:").queue();
+                break;
+            case "🔊":
+                event.deferReply(true).setContent("soon:tm:").queue();
+                break;
+        }
     }
 
     @Override
