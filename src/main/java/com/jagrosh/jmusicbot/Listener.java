@@ -15,12 +15,17 @@
  */
 package com.jagrosh.jmusicbot;
 
+import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jmusicbot.audio.AudioHandler;
 import com.jagrosh.jmusicbot.audio.RequestMetadata;
 import com.jagrosh.jmusicbot.settings.RepeatMode;
 import com.jagrosh.jmusicbot.settings.Settings;
 import com.jagrosh.jmusicbot.utils.OtherUtil;
 import java.util.concurrent.TimeUnit;
+
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.GuildVoiceState;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.ShutdownEvent;
@@ -29,6 +34,7 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.components.Button;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,11 +109,40 @@ public class Listener extends ListenerAdapter
         bot.getAloneInVoiceHandler().onVoiceUpdate(event);
     }
 
+    public boolean checkDJPermission(ButtonClickEvent event)
+    {
+        if(event.getUser().getId().equals(bot.getConfig().getOwnerId()))
+            return true;
+        if(event.getGuild()==null)
+            return true;
+        if(event.getMember().hasPermission(Permission.MANAGE_SERVER))
+            return true;
+        Settings settings = bot.getSettingsManager().getSettings(event.getGuild());
+        Role dj = settings.getRole(event.getGuild());
+        return dj!=null && (event.getMember().getRoles().contains(dj) || dj.getIdLong()==event.getGuild().getIdLong());
+    }
+
+    public boolean inVoiceChannel(ButtonClickEvent event)
+    {
+        Settings settings = bot.getSettingsManager().getSettings(event.getGuild());
+        VoiceChannel channel = settings.getVoiceChannel(event.getGuild());
+        GuildVoiceState state = event.getMember().getVoiceState();
+        if (!state.inVoiceChannel()) return false;
+        return state.getChannel().getId().equals(channel.getId());
+    }
+
     @Override
     public void onButtonClick(@Nonnull ButtonClickEvent event) {
         AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
         switch (event.getComponentId()) {
             case "⏯️":
+                if (!this.inVoiceChannel(event))
+                {
+                    event.deferReply(true).setContent("Chutiye low day vc me tera baap rahega?").queue();
+                    return;
+                }
+
+                if (!this.checkDJPermission(event)) return;
                 if (handler.getPlayer().isPaused()) {
                     handler.getPlayer().setPaused(false);
 
@@ -119,16 +154,37 @@ public class Listener extends ListenerAdapter
                 }
                 break;
             case "⏭️":
+                if (!this.inVoiceChannel(event))
+                {
+                    event.deferReply(true).setContent("Chutiye low day vc me tera baap rahega?").queue();
+                    return;
+                }
+
+                if (!this.checkDJPermission(event)) return;
                 event.deferReply(true).setContent(String.format("Skipping **%s** now", handler.getPlayer().getPlayingTrack().getInfo().title)).queue();
 
                 handler.getPlayer().stopTrack();
                 break;
             case "⏹️":
+                if (!this.inVoiceChannel(event))
+                {
+                    event.deferReply(true).setContent("Chutiye low day vc me tera baap rahega?").queue();
+                    return;
+                }
+
+                if (!this.checkDJPermission(event)) return;
                 event.deferReply(true).setContent("Destroying player").queue();
 
                 handler.getPlayer().destroy();
                 break;
             case "🔁":
+                if (!this.inVoiceChannel(event))
+                {
+                    event.deferReply(true).setContent("Chutiye low day vc me tera baap rahega?").queue();
+                    return;
+                }
+
+                if (!this.checkDJPermission(event)) return;
                 Settings settings = bot.getSettingsManager().getSettings(event.getGuild().getIdLong());
 
                 if (settings.getRepeatMode() == RepeatMode.OFF) {
@@ -146,6 +202,13 @@ public class Listener extends ListenerAdapter
                 }
             break;
             case "🔀":
+                if (!this.inVoiceChannel(event))
+                {
+                    event.deferReply(true).setContent("Chutiye low day vc me tera baap rahega?").queue();
+                    return;
+                }
+
+                if (!this.checkDJPermission(event)) return;
                 handler.getQueue().shuffle(event.getUser().getIdLong());
 
                 event.deferReply(true).setContent("Shuffled queue").queue();
