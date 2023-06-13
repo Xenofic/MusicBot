@@ -15,11 +15,13 @@
  */
 package com.jagrosh.jmusicbot;
 
+import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jagrosh.jdautilities.examples.command.*;
 import com.jagrosh.jmusicbot.commands.admin.*;
 import com.jagrosh.jmusicbot.commands.dj.*;
+import com.jagrosh.jmusicbot.commands.filters.EightDickCmd;
 import com.jagrosh.jmusicbot.commands.general.*;
 import com.jagrosh.jmusicbot.commands.music.*;
 import com.jagrosh.jmusicbot.commands.owner.*;
@@ -28,6 +30,8 @@ import com.jagrosh.jmusicbot.gui.GUI;
 import com.jagrosh.jmusicbot.settings.SettingsManager;
 import com.jagrosh.jmusicbot.utils.OtherUtil;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import javax.security.auth.login.LoginException;
 import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.Activity;
@@ -103,6 +107,8 @@ public class JMusicBot {
                 .setLinkedCacheSize(200)
                 .setGuildSettingsManager(settings)
                 .setHelpConsumer((event) -> {
+                    // TODO: Make help dynamic
+                    //List<Command> commands = event.getClient().getCommands();
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append("My prefix is: `x!`");
                     stringBuilder.append("\nI am very cute UwU");
@@ -112,6 +118,7 @@ public class JMusicBot {
                     EmbedBuilder embed = new EmbedBuilder();
                     embed.setAuthor("Kana | Help Menu", event.getAuthor().getAvatarUrl(), event.getAuthor().getAvatarUrl());
                     embed.setDescription(stringBuilder);
+                    embed.addField("Filters [1]", "`8d`", false);
                     embed.addField("General [3]", "`about`, `ping`, `settings`", false);
                     embed.addField("Music [9]",
                             "`nowplaying`, `play`, `playlists`, `queue`, `remove`, `search`, `scsearch`, `shuffle`, `skip`",
@@ -136,6 +143,8 @@ public class JMusicBot {
                         new PingCommand(),
                         new SettingsCmd(bot),
                         new AboutCmd(bot),
+
+                        new EightDickCmd(bot),
 
                         new NowplayingCmd(bot),
                         new PlayCmd(bot),

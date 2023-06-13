@@ -16,8 +16,9 @@
 package com.jagrosh.jmusicbot.settings;
 
 import com.jagrosh.jdautilities.command.GuildSettingsProvider;
-import java.util.Collection;
-import java.util.Collections;
+
+import java.util.*;
+
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -34,6 +35,8 @@ public class Settings implements GuildSettingsProvider
     protected long voiceId;
     protected long roleId;
     private int volume;
+
+    private HashMap filters;
     private String defaultPlaylist;
     private RepeatMode repeatMode;
     private String prefix;
@@ -71,6 +74,7 @@ public class Settings implements GuildSettingsProvider
         this.repeatMode = repeatMode;
         this.prefix = prefix;
         this.skipRatio = skipRatio;
+        this.filters = new HashMap();
     }
     
     public Settings(SettingsManager manager, long textId, long voiceId, long roleId, int volume, String defaultPlaylist, RepeatMode repeatMode, String prefix, double skipRatio)
@@ -84,6 +88,7 @@ public class Settings implements GuildSettingsProvider
         this.repeatMode = repeatMode;
         this.prefix = prefix;
         this.skipRatio = skipRatio;
+        this.filters = new HashMap();
     }
     
     // Getters
@@ -156,6 +161,21 @@ public class Settings implements GuildSettingsProvider
     {
         this.volume = volume;
         this.manager.writeSettings();
+    }
+
+    public void setFilter(String key, Boolean val)
+    {
+        this.filters.put(key, val);
+    }
+
+    public Boolean getFilters(String key)
+    {
+        // TODO: Learn more abt types and return a entry set if no key is given
+        Object value = this.filters.get(key);
+        if (value instanceof Boolean) {
+            return (Boolean) value;
+        }
+        return false;
     }
     
     public void setDefaultPlaylist(String defaultPlaylist)
