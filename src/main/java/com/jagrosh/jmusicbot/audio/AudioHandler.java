@@ -18,8 +18,11 @@ package com.jagrosh.jmusicbot.audio;
 import com.jagrosh.jmusicbot.JMusicBot;
 import com.jagrosh.jmusicbot.playlist.PlaylistLoader.Playlist;
 import com.jagrosh.jmusicbot.settings.RepeatMode;
+import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
+import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
@@ -177,6 +180,35 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
                 queue.add(clone);
             else
                 queue.addAt(0, clone);
+        }
+
+        // Autoplay Logic:
+        if (manager.getBot().getSettingsManager().getSettings(Long.parseLong("949530111693180928")).getAutoplay())
+        {
+            String key = String.format("https://www.youtube.com/watch?v=%s&list=RD$%s", track.getInfo().identifier, track.getInfo().identifier);
+
+            manager.loadItem(track.getIdentifier(), new AudioLoadResultHandler() {
+                @Override
+                public void trackLoaded(AudioTrack audioTrack) {
+                    addTrack(new QueuedTrack(audioTrack, manager.getBot().getJDA().getSelfUser()));
+                    return;
+                }
+
+                @Override
+                public void playlistLoaded(AudioPlaylist audioPlaylist) {
+                    return;
+                }
+
+                @Override
+                public void noMatches() {
+                    return;
+                }
+
+                @Override
+                public void loadFailed(FriendlyException e) {
+                    return;
+                }
+            });
         }
         
         if(queue.isEmpty())

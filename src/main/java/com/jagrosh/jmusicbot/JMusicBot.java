@@ -21,6 +21,7 @@ import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jagrosh.jdautilities.examples.command.*;
 import com.jagrosh.jmusicbot.commands.admin.*;
 import com.jagrosh.jmusicbot.commands.dj.*;
+import com.jagrosh.jmusicbot.commands.filters.BassboostCmd;
 import com.jagrosh.jmusicbot.commands.filters.EightDickCmd;
 import com.jagrosh.jmusicbot.commands.general.*;
 import com.jagrosh.jmusicbot.commands.music.*;
@@ -118,7 +119,7 @@ public class JMusicBot {
                     EmbedBuilder embed = new EmbedBuilder();
                     embed.setAuthor("Kana | Help Menu", event.getAuthor().getAvatarUrl(), event.getAuthor().getAvatarUrl());
                     embed.setDescription(stringBuilder);
-                    embed.addField("Filters [1]", "`8d`", false);
+                    embed.addField("Filters [1]", "`8d`, `bassboost`", false);
                     embed.addField("General [3]", "`about`, `ping`, `settings`", false);
                     embed.addField("Music [9]",
                             "`nowplaying`, `play`, `playlists`, `queue`, `remove`, `search`, `scsearch`, `shuffle`, `skip`",
@@ -145,6 +146,7 @@ public class JMusicBot {
                         new AboutCmd(bot),
 
                         new EightDickCmd(bot),
+                        new BassboostCmd(bot),
 
                         new NowplayingCmd(bot),
                         new PlayCmd(bot),
@@ -155,6 +157,7 @@ public class JMusicBot {
                         new SCSearchCmd(bot),
                         new ShuffleCmd(bot),
                         new SkipCmd(bot),
+                        new AutoplayCmd(bot),
 
                         new ForceRemoveCmd(bot),
                         new ForceskipCmd(bot),
