@@ -37,6 +37,8 @@ public class Settings implements GuildSettingsProvider
     private int volume;
 
     private HashMap filters;
+
+    private Boolean autoplay;
     private String defaultPlaylist;
     private RepeatMode repeatMode;
     private String prefix;
@@ -75,6 +77,7 @@ public class Settings implements GuildSettingsProvider
         this.prefix = prefix;
         this.skipRatio = skipRatio;
         this.filters = new HashMap();
+        this.autoplay = false;
     }
     
     public Settings(SettingsManager manager, long textId, long voiceId, long roleId, int volume, String defaultPlaylist, RepeatMode repeatMode, String prefix, double skipRatio)
@@ -89,6 +92,7 @@ public class Settings implements GuildSettingsProvider
         this.prefix = prefix;
         this.skipRatio = skipRatio;
         this.filters = new HashMap();
+        this.autoplay = false;
     }
     
     // Getters
@@ -166,6 +170,16 @@ public class Settings implements GuildSettingsProvider
     public void setFilter(String key, Boolean val)
     {
         this.filters.put(key, val);
+    }
+
+    public void setAutoplay(Boolean value)
+    {
+        this.autoplay = value;
+    }
+
+    public Boolean getAutoplay()
+    {
+        return this.autoplay;
     }
 
     public Boolean getFilters(String key)
